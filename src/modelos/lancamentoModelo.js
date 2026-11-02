@@ -68,3 +68,11 @@ console.log(excluirLancamento(2));
 
 console.log("Lançamentos restantes:");
 console.log(listarLancamentos());
+
+module.exports = {
+    cadastrarLancamento,
+    listarLancamentos,
+    buscarLancamentoPorId,
+    atualizarLancamento,
+    excluirLancamento
+};
