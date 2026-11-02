@@ -27,6 +27,20 @@ function buscarLancamentoPorId(id) {
 }
 
 
+function buscarPorDescricao(texto) {
+    return lancamentos.filter(function(lancamento) {
+        return lancamento.descricao.toLowerCase()
+            .includes(texto.toLowerCase());
+    });
+}
+
+function buscarPorValor(valor) {
+    return lancamentos.filter(function(lancamento) {
+        return lancamento.valor === valor;
+    });
+}
+
+
 function atualizarLancamento(id, descricao, tipo, valor) {
     const lancamento = buscarLancamentoPorId(id);
 
@@ -69,10 +83,19 @@ console.log(excluirLancamento(2));
 console.log("Lançamentos restantes:");
 console.log(listarLancamentos());
 
+
+console.log("Buscando pela descrição:");
+console.log(buscarPorDescricao("bandeja"));
+
+console.log("Buscando pelo valor:");
+console.log(buscarPorValor(150));
+
 module.exports = {
     cadastrarLancamento,
     listarLancamentos,
     buscarLancamentoPorId,
+    buscarPorDescricao,
+    buscarPorValor,
     atualizarLancamento,
     excluirLancamento
 };
