@@ -1,0 +1,11 @@
+SISTEMA DE FLUXO DE CAIXA — MADEIREIRA GOMES E MARENDA
+
+Estrutura de pastas solicitada pelo professor.
+Os arquivos JS são iniciais e contêm apenas indicações de responsabilidade.
+O projeto ainda NÃO está funcional; será programado por etapas em Node.js.
+
+LUAN: src/modelos/usuarioModelo.js, src/controladores/usuarioControlador.js, src/rotas/usuarioRotas.js
+RUTI: src/modelos/lancamentoModelo.js, src/controladores/lancamentoControlador.js, src/rotas/lancamentoRotas.js
+RENAN: src/modelos/financeiroModelo.js, src/controladores/financeiroControlador.js, src/rotas/financeiroRotas.js
+
+Compartilhados: schema.sql, bd.js, index.js, package.json, src/rotas/rotas.js, publico/

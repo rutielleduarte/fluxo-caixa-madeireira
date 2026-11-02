@@ -1,0 +1,2 @@
+-- Banco de dados: estrutura a definir conforme o dicionário de dados.
+-- Este arquivo é um espaço reservado; não executa a criação das tabelas.
