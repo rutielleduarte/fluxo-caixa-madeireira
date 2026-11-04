@@ -206,6 +206,7 @@ console.log("Senhas protegidas:",
     usuarios[1].senha !== "SenhaTeste456!"
 );
 
+
 // TESTANDO O LOGIN
 
 console.log("Login da Maria:");
