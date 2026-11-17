@@ -3,90 +3,122 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fluxo de Caixa - Madeireira</title>
+  <meta name="theme-color" content="#294b91">
+  <meta name="description" content="Painel de fluxo de caixa da Gomes Marenda - Madeiras e Acabamentos.">
+  <title>Fluxo de Caixa | Gomes Marenda</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bitter:wght@600;700&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
 </head>
 <body>
-  <header class="topo">
-    <h1>Fluxo de caixa</h1>
-    <p>Madeireira</p>
-  </header>
+  <!-- Icones locais: sem biblioteca adicional. -->
+  <svg class="icone-definicoes" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+    <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.4"/><rect x="14" y="3" width="7" height="7" rx="1.4"/><rect x="3" y="14" width="7" height="7" rx="1.4"/><rect x="14" y="14" width="7" height="7" rx="1.4"/></symbol>
+    <symbol id="i-receipt" viewBox="0 0 24 24"><path d="M5 3h14v18l-3.5-2-3.5 2-3.5-2L5 21V3Z"/><path d="M8.5 8h7M8.5 12h7"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-arrow-up" viewBox="0 0 24 24"><path d="m5 15 7-7 7 7M12 8v13"/></symbol>
+    <symbol id="i-arrow-down" viewBox="0 0 24 24"><path d="m5 9 7 7 7-7M12 16V3"/></symbol>
+    <symbol id="i-wallet" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="15" rx="3"/><path d="M3 9V6a3 3 0 0 1 3-3h12M15 14h6M16.5 14h.01"/></symbol>
+    <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V4M4 20h17M8 16v-4M13 16V8M18 16V5"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></symbol>
+    <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></symbol>
+    <symbol id="i-pencil" viewBox="0 0 24 24"><path d="m15 5 4 4M4 20l4.8-1.1L20 7.7a2 2 0 0 0-3.8-3.8L5 15.2 4 20Z"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 14h10l1-14M10 11v6M14 11v6"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="M5 5 19 19M19 5 5 19"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M6.3 9a7 7 0 0 1 12-2l1.7 5M4 12l1.7 5a7 7 0 0 0 12 1"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 10v6M12 7h.01"/></symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></symbol>
+  </svg>
 
-  <main>
-    <section class="resumo" aria-label="Resumo financeiro">
-      <label class="saldo-inicial">Saldo inicial (R$)
-        <input type="number" id="saldoInicial" step="0.01" value="1000">
-      </label>
-      <div class="indicador"><span>Receitas</span><strong id="totalReceitas" class="pos">R$ 0,00</strong></div>
-      <div class="indicador"><span>Despesas</span><strong id="totalDespesas" class="neg">R$ 0,00</strong></div>
-      <div class="indicador saldo"><span>Saldo atual</span><strong id="saldoFinal">R$ 0,00</strong></div>
-    </section>
+  <div class="aplicativo">
+    <aside class="lateral" aria-label="Barra lateral">
+      <a href="#visao-geral" class="marca" aria-label="Gomes Marenda, ir para o inicio">
+        <img src="logo-gomes-marenda.png" alt="Gomes Marenda" width="212" height="86">
+      </a>
+      <div class="identidade-subtitulo">MADEIRAS &amp; ACABAMENTOS</div>
+      <div class="lateral-linha"></div>
+      <p class="menu-caption">MENU PRINCIPAL</p>
+      <nav class="menu" aria-label="Navegacao principal">
+        <a class="menu-link ativo" href="#visao-geral" data-nav="visao-geral">
+          <svg class="icone"><use href="#i-grid"/></svg><span>Visão geral</span>
+        </a>
+        <a class="menu-link" href="#lancamentos" data-nav="lancamentos">
+          <svg class="icone"><use href="#i-receipt"/></svg><span>Lançamentos</span>
+        </a>
+      </nav>
+      <p class="menu-caption menu-caption-atalho">ACESSO RÁPIDO</p>
+      <button class="menu-link menu-novo" type="button" data-abrir-cadastro>
+        <svg class="icone"><use href="#i-plus"/></svg><span>Novo lançamento</span>
+      </button>
+      <div class="lateral-final">
+        <div class="lateral-selo"><span class="selo-icone">GM</span><div><strong>Gomes Marenda</strong><small>Gestão financeira</small></div></div>
+        <p>Sistema acadêmico • versão 1.0</p>
+      </div>
+    </aside>
 
-    <div class="colunas">
-      <section class="painel" aria-labelledby="tituloForm">
-        <h2 id="tituloForm">Novo lançamento</h2>
-        <form id="formLancamento">
-          <input type="hidden" id="idLancamento">
-          <label>Descrição <input id="descricao" required maxlength="255"></label>
-          <div class="linha">
-            <label>Tipo
-              <select id="tipo">
-                <option value="entrada">Entrada</option>
-                <option value="saida">Saída</option>
-              </select>
-            </label>
-            <label>Valor (R$) <input id="valor" type="number" step="0.01" min="0.01" required></label>
-          </div>
-          <div class="linha">
-            <label>Data <input id="data" type="date" required></label>
-            <label>Forma de pagamento
-              <select id="forma">
-                <option value="">Não informada</option>
-                <option>Dinheiro</option>
-                <option>Pix</option>
-                <option>Cartão</option>
-                <option>Boleto</option>
-                <option>Transferência</option>
-              </select>
-            </label>
-          </div>
-          <label>Categoria <select id="categoria"></select></label>
-          <label>Observação <textarea id="observacao" rows="2"></textarea></label>
-          <p id="mensagem" role="status"></p>
-          <div class="acoes">
-            <button type="submit" id="btnSalvar">Salvar lançamento</button>
-            <button type="button" id="btnCancelar" class="secundario" hidden>Cancelar edição</button>
-          </div>
-        </form>
-      </section>
+    <div class="conteudo">
+      <header class="barra-superior">
+        <div class="caminho">Gestão financeira <svg class="icone icone-pequeno"><use href="#i-chevron"/></svg> <strong>Visão geral</strong></div>
+        <div class="barra-direita"><span class="conexao" id="conexao" aria-live="polite"><span class="bolinha bolinha-carregando"></span>Conectando...</span><span class="barra-separador"></span><div class="perfil"><span class="perfil-avatar">GM</span><span><strong>Gomes Marenda</strong><small>Painel administrativo</small></span></div></div>
+      </header>
 
-      <section class="painel" aria-labelledby="tituloLista">
-        <h2 id="tituloLista">Lançamentos</h2>
-        <div class="filtros">
-          <input id="busca" type="search" placeholder="Buscar por descrição" aria-label="Buscar por descrição">
-          <select id="filtroTipo" aria-label="Filtrar por tipo">
-            <option value="">Todos</option>
-            <option value="entrada">Entradas</option>
-            <option value="saida">Saídas</option>
-          </select>
-          <input id="dataInicial" type="date" aria-label="Data inicial">
-          <input id="dataFinal" type="date" aria-label="Data final">
+      <main class="principal" id="visao-geral">
+        <div class="abertura"><div><p class="sobretitulo">PAINEL FINANCEIRO</p><h1>Visão geral</h1><p>Gerencie entradas, saídas e acompanhe seu fluxo de caixa.</p></div><div class="data-hoje"><svg class="icone"><use href="#i-calendar"/></svg><span id="dataAtual"></span></div></div>
+
+        <section class="banner-marca" aria-label="Painel da empresa">
+          <div class="banner-conteudo"><span class="banner-tag">GOMES MARENDA • FINANCEIRO</span><h2>Controle em cada detalhe.<br><span>Clareza em cada decisão.</span></h2><p>Uma visão organizada das movimentações da sua empresa.</p><button type="button" class="botao botao-branco" data-abrir-cadastro><svg class="icone"><use href="#i-plus"/></svg>Adicionar lançamento</button></div>
+          <div class="banner-motivo" aria-hidden="true"><span></span><span></span><span></span></div>
+        </section>
+
+        <div id="avisoSistema" class="aviso-sistema" role="status" hidden>
+          <svg class="icone"><use href="#i-info"/></svg>
+          <div><strong id="avisoTitulo"></strong><p id="avisoTexto"></p></div>
+          <button type="button" class="botao botao-aviso" id="acaoAviso"></button>
         </div>
-        <div class="tabela-wrap">
-          <table>
-            <thead>
-              <tr><th>Data</th><th>Descrição</th><th>Tipo</th><th class="num">Valor</th><th></th></tr>
-            </thead>
-            <tbody id="corpoTabela"></tbody>
-          </table>
-        </div>
-      </section>
+
+        <section aria-label="Indicadores financeiros" class="metricas">
+          <article class="metrica-card"><div class="metrica-topo"><span>Saldo do período</span><span class="metrica-icone azul-claro"><svg class="icone"><use href="#i-wallet"/></svg></span></div><strong id="saldoFinal">R$ 0,00</strong><p>Saldo inicial + movimentações filtradas</p><span class="metrica-decoracao"></span></article>
+          <article class="metrica-card"><div class="metrica-topo"><span>Entradas</span><span class="metrica-icone verde-claro"><svg class="icone"><use href="#i-arrow-up"/></svg></span></div><strong class="valor-entrada" id="totalReceitas">R$ 0,00</strong><p>Receitas no período selecionado</p><span class="metrica-decoracao verde"></span></article>
+          <article class="metrica-card"><div class="metrica-topo"><span>Saídas</span><span class="metrica-icone vermelho-claro"><svg class="icone"><use href="#i-arrow-down"/></svg></span></div><strong class="valor-saida" id="totalDespesas">R$ 0,00</strong><p>Despesas no período selecionado</p><span class="metrica-decoracao vermelho"></span></article>
+          <article class="metrica-card"><div class="metrica-topo"><span>Movimentações</span><span class="metrica-icone lilas-claro"><svg class="icone"><use href="#i-receipt"/></svg></span></div><strong id="totalLancamentos">0</strong><p>Registros encontrados nos filtros</p><span class="metrica-decoracao lilas"></span></article>
+        </section>
+
+        <section class="modulos" aria-label="Resumo e tendencia">
+          <article class="cartao grafico-cartao">
+            <div class="cartao-cabecalho"><div><p class="rotulo-pequeno">DESEMPENHO</p><h2>Movimentação financeira</h2><p>Entradas e saídas nos últimos 6 meses</p></div><div class="legenda"><span><i class="legenda-cor legenda-entrada"></i>Entradas</span><span><i class="legenda-cor legenda-saida"></i>Saídas</span></div></div>
+            <div id="grafico" class="grafico" aria-label="Grafico de movimentacao financeira"></div>
+            <div class="grafico-rodape">Valores referentes aos lançamentos carregados no sistema.</div>
+          </article>
+          <article class="cartao resumo-cartao">
+            <div class="cartao-cabecalho"><div><p class="rotulo-pequeno">CONTROLE</p><h2>Resumo do caixa</h2><p>Personalize o saldo de referência</p></div><span class="icone-circulo"><svg class="icone"><use href="#i-wallet"/></svg></span></div>
+            <label class="campo-saldo" for="saldoInicial">Saldo inicial (R$)<div class="saldo-input"><span>R$</span><input id="saldoInicial" type="number" value="0" step="0.01" inputmode="decimal" aria-label="Valor do saldo inicial"></div></label>
+            <div class="resumo-divisor"></div>
+            <div class="resumo-linha"><span>Total de entradas</span><strong class="valor-entrada" id="resumoEntradas">R$ 0,00</strong></div>
+            <div class="resumo-linha"><span>Total de saídas</span><strong class="valor-saida" id="resumoSaidas">R$ 0,00</strong></div>
+            <div class="resumo-final"><span>Saldo calculado</span><strong id="resumoSaldo">R$ 0,00</strong></div>
+            <p class="resumo-nota">O cálculo considera os filtros atuais e não substitui o extrato bancário.</p>
+          </article>
+        </section>
+
+        <section id="lancamentos" class="cartao lancamentos-cartao">
+          <div class="lista-cabecalho"><div><p class="rotulo-pequeno">MOVIMENTAÇÕES</p><h2>Lançamentos financeiros</h2><p>Consulte, filtre e organize as movimentações cadastradas.</p></div><button type="button" class="botao botao-primario" data-abrir-cadastro><svg class="icone"><use href="#i-plus"/></svg>Novo lançamento</button></div>
+          <div class="filtros"><label class="busca-container"><svg class="icone"><use href="#i-search"/></svg><input type="search" id="busca" placeholder="Buscar por descrição..." aria-label="Buscar lancamentos por descricao"></label><label class="filtro-rotulo"><span>Tipo</span><select id="filtroTipo" aria-label="Filtrar pelo tipo de lancamento"><option value="">Todos os tipos</option><option value="entrada">Entradas</option><option value="saida">Saídas</option></select></label><label class="filtro-rotulo"><span>De</span><input type="date" id="dataInicial" aria-label="Data inicial"></label><label class="filtro-rotulo"><span>Até</span><input type="date" id="dataFinal" aria-label="Data final"></label><button type="button" id="limparFiltros" class="limpar-filtros">Limpar filtros</button></div>
+          <div class="tabela-container"><table><thead><tr><th>DESCRIÇÃO</th><th>DATA</th><th>TIPO</th><th>CATEGORIA</th><th class="alinhar-direita">VALOR</th><th class="alinhar-direita">AÇÕES</th></tr></thead><tbody id="corpoTabela"><tr><td colspan="6" class="tabela-vazia">Carregando lançamentos...</td></tr></tbody></table></div>
+          <div class="tabela-rodape"><span id="contagem">0 lançamentos</span><button id="atualizar" type="button" class="atualizar"><svg class="icone"><use href="#i-refresh"/></svg>Atualizar</button></div>
+        </section>
+        <footer class="rodape">© <span id="anoAtual"></span> Gomes Marenda · Madeiras e Acabamentos <span>Projeto acadêmico de gestão financeira</span></footer>
+      </main>
     </div>
-  </main>
+  </div>
 
-  <script src="script.js"></script>
+  <dialog id="modalLancamento" class="modal">
+    <form id="formLancamento" class="modal-form">
+      <div class="modal-cabecalho"><div><p class="rotulo-pequeno">MOVIMENTAÇÃO FINANCEIRA</p><h2 id="tituloForm">Novo lançamento</h2><p>Preencha os dados da transação.</p></div><button type="button" id="fecharModal" class="botao-fechar" aria-label="Fechar formulario"><svg class="icone"><use href="#i-x"/></svg></button></div>
+      <div class="modal-corpo"><input type="hidden" id="idLancamento"><label class="campo">Descrição<input id="descricao" name="descricao" type="text" maxlength="255" placeholder="Ex.: Venda de caixas de madeira" required></label><div class="form-duas-colunas"><label class="campo">Tipo de movimentação<select id="tipo" required><option value="entrada">Entrada</option><option value="saida">Saída</option></select></label><label class="campo">Valor (R$)<input id="valor" type="number" step="0.01" min="0.01" placeholder="0,00" required></label></div><div class="form-duas-colunas"><label class="campo">Data<input id="data" type="date" required></label><label class="campo">Forma de pagamento<select id="forma"><option value="">Não informada</option><option>Pix</option><option>Dinheiro</option><option>Cartão</option><option>Boleto</option><option>Transferência</option></select></label></div><label class="campo">Observações (opcional)<textarea id="observacao" rows="2" placeholder="Detalhes adicionais sobre a movimentação"></textarea></label><div class="bloco-vinculos"><div><h3>Vínculos com o banco de dados</h3><p>Utilize IDs que já existam nas tabelas do MySQL.</p></div><div class="form-tres-colunas"><label class="campo">ID do usuário<input id="idUsuario" type="number" min="1" step="1" required></label><label class="campo">ID da categoria<input id="idCategoria" type="number" min="1" step="1" required></label><label class="campo">ID da conta<input id="idConta" type="number" min="1" step="1" required></label></div></div><p class="mensagem-form" id="mensagem" role="alert" aria-live="polite"></p></div>
+      <div class="modal-rodape"><button type="button" class="botao botao-cancelar" id="btnCancelar">Cancelar</button><button type="submit" class="botao botao-primario" id="btnSalvar">Salvar lançamento</button></div>
+    </form>
+  </dialog>
 </body>
 </html>
