@@ -1,4 +1,4 @@
-xv zfnhszrtjz# Sistema de Fluxo de Caixa — Madeireira Gomes e Marenda
+# Sistema de Fluxo de Caixa — Madeireira Gomes e Marenda
 
 Projeto acadêmico de back-end para organizar o registro e a consulta de movimentações financeiras de uma madeireira.
 
