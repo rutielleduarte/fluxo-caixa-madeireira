@@ -2,7 +2,7 @@
 
 const modelo = require('../modelos/financeiroModelo');
 function obterTotalReceitas(req, res) {
- const total = modelo.calcularTotalReceitas();
+ const total = models.calcularTotalReceitas();
  return res.json({
    sucesso: true,
    totalReceitas: total,
@@ -12,7 +12,7 @@ function obterTotalReceitas(req, res) {
 
 
 function obterTotalDespesas(req, res) {
- const total = modelo.calcularTotalDespesas();
+ const total = models.calcularTotalDespesas();
  return res.json({
    sucesso: true,
    totalDespesas: total,
@@ -23,7 +23,7 @@ function obterTotalDespesas(req, res) {
 
 function obterSaldo(req, res) {
  const saldoInicial = parseFloat(req.query.saldoInicial) || 1000.00;
- const saldoFinal = modelo.calcularSaldo(saldoInicial);
+ const saldoFinal = models.calcularSaldo(saldoInicial);
 
 
  return res.json({
@@ -47,7 +47,7 @@ function listarFluxoCaixa(req, res) {
  }
 
 
- const movimentacoes = modelo.consultarFluxoCaixa(dataInicial, dataFinal);
+ const movimentacoes = models.consultarFluxoCaixa(dataInicial, dataFinal);
 
 
  return res.json({
@@ -61,7 +61,7 @@ function listarFluxoCaixa(req, res) {
 
 function obterResumoFinanceiro(req, res) {
  const saldoInicial = parseFloat(req.query.saldoInicial) || 1000.00;
- const resumo = modelo.gerarResumoFinanceiro(saldoInicial);
+ const resumo = models.gerarResumoFinanceiro(saldoInicial);
 
 
  return res.json({
