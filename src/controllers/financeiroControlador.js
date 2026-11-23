@@ -1,6 +1,6 @@
 // RENAN — Controlador
 
-const modelo = require('../modelos/financeiroModelo');
+const modelo = require('../models/financeiroModelo');
 function obterTotalReceitas(req, res) {
  const total = models.calcularTotalReceitas();
  return res.json({
