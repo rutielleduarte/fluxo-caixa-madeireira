@@ -12,7 +12,7 @@ Este README apresenta a finalidade da aplicação, a arquitetura do código, as 
 
 O Sistema de Fluxo de Caixa da **Madeireira Gomes e Marenda** foi desenvolvido como atividade acadêmica de Desenvolvimento de Sistemas. Seu objetivo é auxiliar no controle de entradas e saídas financeiras, permitindo cadastrar, consultar, atualizar e excluir lançamentos e, futuramente, acompanhar saldos e relatórios com controle de acesso por perfil.
 
-Trata-se de uma aplicação **Node.js com API REST em Express**, organizada em camadas semelhantes ao padrão MVC (Model, Controller e rotas). O servidor também disponibiliza arquivos estáticos de uma interface HTML inicial, ainda não concluída.
+Trata-se de uma aplicação **Node.js com API REST em Express**, organizada em camadas semelhantes ao padrão MVC (Model, Controller e rotas). O servidor também disponibiliza arquivos estáticos de uma interface HTML inicial,que ainda será modificada.
 
 ### Funcionalidades encontradas no código
 
