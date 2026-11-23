@@ -8,7 +8,7 @@ const {
     realizarLogin,
     alterarPermissoes,
     redefinirSenha
-} = require("../modelos/usuarioModelo");
+} = require("../models/usuarioModelo");
 
 // CONTROLADOR - Listar usuários
 
