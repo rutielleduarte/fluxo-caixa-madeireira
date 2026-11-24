@@ -1,110 +1,92 @@
-
 const modelo = require('../models/lancamentoModelo');
+
+// Função auxiliar para gerar erros com status HTTP
+function criarErro(mensagem, status) {
+    const erro = new Error(mensagem);
+    erro.status = status;
+    return erro;
+}
 
 // Função para validar os dados
 function validarLancamento(descricao, tipo, valor) {
-
     if (typeof descricao !== "string" || descricao.trim() === "") {
-        return "Erro: a descrição é obrigatória!";
+        throw criarErro("A descrição é obrigatória!", 400);
     }
 
     if (tipo !== "entrada" && tipo !== "saida") {
-        return "Erro: o tipo deve ser entrada ou saida!";
+        throw criarErro("O tipo deve ser 'entrada' ou 'saida'!", 400);
     }
 
     if (typeof valor !== "number" || !Number.isFinite(valor) || valor <= 0) {
-        return "Erro: o valor deve ser maior que zero!";
+        throw criarErro("O valor deve ser maior que zero!", 400);
     }
-
-    return "Lançamento válido!";
 }
-
 
 // Função para cadastrar após validar
 async function cadastrarLancamentoControlador(dados) {
-
-    const resultado = validarLancamento(
+    validarLancamento(
         dados.descricao,
         dados.tipo_lancamento,
         dados.valor
     );
 
-    if (resultado !== "Lançamento válido!") {
-        return resultado;
-    }
-
     return await modelo.cadastrarLancamento(dados);
 }
-
 
 // Função para listar lançamentos
 async function listarLancamentosControlador() {
     return await modelo.listarLancamentos();
 }
 
-
 // Função para buscar por ID
 async function buscarLancamentoPorIdControlador(id) {
-
     const lancamento = await modelo.buscarLancamentoPorId(id);
 
     if (lancamento === null) {
-        return "Erro: lançamento não encontrado!";
+        throw criarErro("Lançamento não encontrado!", 404);
     }
 
     return lancamento;
 }
-
 
 // Função para buscar por descrição
 async function buscarPorDescricaoControlador(texto) {
     return await modelo.buscarPorDescricao(texto);
 }
 
-
 // Função para buscar por valor
 async function buscarPorValorControlador(valor) {
     return await modelo.buscarPorValor(valor);
 }
 
-
 // Função para atualizar lançamento
 async function atualizarLancamentoControlador(id, dados) {
-
-    const validacao = validarLancamento(
+    validarLancamento(
         dados.descricao,
         dados.tipo_lancamento,
         dados.valor
     );
 
-    if (validacao !== "Lançamento válido!") {
-        return validacao;
-    }
-
     const lancamento = await modelo.buscarLancamentoPorId(id);
 
     if (lancamento === null) {
-        return "Erro: lançamento não encontrado!";
+        throw criarErro("Lançamento não encontrado!", 404);
     }
 
     return await modelo.atualizarLancamento(id, dados);
 }
 
-
 // Função para excluir lançamento
 async function excluirLancamentoControlador(id) {
-
     const lancamento = await modelo.buscarLancamentoPorId(id);
 
     if (lancamento === null) {
-        return "Erro: lançamento não encontrado!";
+        throw criarErro("Lançamento não encontrado!", 404);
     }
 
     return await modelo.excluirLancamento(id);
 }
 
-
-// Exportando as funções
 module.exports = {
     validarLancamento,
     cadastrarLancamentoControlador,
