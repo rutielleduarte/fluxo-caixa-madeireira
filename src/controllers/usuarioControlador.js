@@ -1,148 +1,116 @@
-m// LUAN — Controlador de usuários.
-// Implementar validações, login e controle de permissões.
+// LUAN — Controlador de usuários.
 
 const {
     cadastrarUsuario,
     listarUsuarios,
     buscarUsuarioPorId,
+    buscarUsuarioPorEmail,
     realizarLogin,
     alterarPermissoes,
     redefinirSenha
-} = require("../models/usuarioModelo");
+} = require('../models/usuarioModelo');
 
 // CONTROLADOR - Listar usuários
-
-function listarUsuariosControlador() {
-    return listarUsuarios();
+async function listarUsuariosControlador() {
+    return await listarUsuarios();
 }
 
- // CONTROLADOR - Buscar usuário por ID
-
-function buscarUsuarioPorIdControlador(id) {
+// CONTROLADOR - Buscar usuário por ID
+async function buscarUsuarioPorIdControlador(id) {
     const idNumero = Number(id);
 
     if (!Number.isInteger(idNumero) || idNumero <= 0) {
         return null;
     }
 
-    return buscarUsuarioPorId(idNumero);
+    return await buscarUsuarioPorId(idNumero);
 }
 
- // CONTROLADOR - Cadastrar usuários
+// CONTROLADOR - Cadastrar usuários
+async function cadastrarUsuarioControlador(idResponsavel, nome, email, perfil, senha) {
+    // Verifica se o responsável é TI ativo
+    const responsavel = await buscarUsuarioPorId(Number(idResponsavel));
 
-function cadastrarUsuarioControlador(idResponsavel, nome, email, perfil, senha) {
-
-    // Verifica se o responsável é TI
-    const responsavel = buscarUsuarioPorId(Number(idResponsavel));
-
-    if (!responsavel || responsavel.perfil !== "ti" ||
-        responsavel.status !== "ativo") {
+    if (!responsavel || responsavel.perfil !== 'ti' || responsavel.status !== 'ativo') {
         return null;
     }
 
     // Verifica os dados informados
-    if (typeof nome !== "string" || !nome.trim()) {
+    if (typeof nome !== 'string' || !nome.trim()) {
         return null;
     }
 
-    if (typeof email !== "string" ||
-        !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+    if (typeof email !== 'string' || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
         return null;
     }
 
-    if (typeof senha !== "string" || senha.length < 8) {
+    if (typeof senha !== 'string' || senha.length < 8) {
         return null;
     }
 
-    // Verifica o perfil
-    const perfisValidos = ["proprietario", "administracao", "ti"];
-
+    const perfisValidos = ['proprietario', 'administracao', 'ti'];
     if (!perfisValidos.includes(perfil)) {
         return null;
     }
 
-    // Verifica se o e-mail já está cadastrado
+    // Verifica se o e-mail já está cadastrado no MySQL
     const emailLimpo = email.trim().toLowerCase();
+    const usuarioExistente = await buscarUsuarioPorEmail(emailLimpo);
 
-    const emailExiste = listarUsuarios().some(
-        usuario => usuario.email.toLowerCase() === emailLimpo
-    );
-
-    if (emailExiste) {
+    if (usuarioExistente) {
         return null;
     }
 
-    // Realiza o cadastro
-    return cadastrarUsuario(nome.trim(), emailLimpo, perfil, senha);
+    return await cadastrarUsuario(nome.trim(), emailLimpo, perfil, senha);
 }
 
 // CONTROLADOR - Realizar login
-
-function realizarLoginControlador(email, senha) {
-
-    // Verifica se o e-mail foi informado
-    if (typeof email !== "string" || !email.trim()) {
+async function realizarLoginControlador(email, senha) {
+    if (typeof email !== 'string' || !email.trim()) {
         return null;
     }
 
-    // Verifica se a senha foi informada
-    if (typeof senha !== "string" || !senha) {
+    if (typeof senha !== 'string' || !senha) {
         return null;
     }
 
-    // Realiza o login pelo modelo
-    return realizarLogin(email.trim().toLowerCase(), senha);
+    return await realizarLogin(email.trim().toLowerCase(), senha);
 }
 
 // CONTROLADOR - Alterar permissões
-
-function alterarPermissoesControlador(idResponsavel, idUsuario, novoPerfil) {
-
-    // Converte os IDs para números
+async function alterarPermissoesControlador(idResponsavel, idUsuario, novoPerfil) {
     const responsavel = Number(idResponsavel);
     const usuario = Number(idUsuario);
 
-    // Verifica se os IDs são válidos
     if (!Number.isInteger(responsavel) || responsavel <= 0 ||
         !Number.isInteger(usuario) || usuario <= 0) {
         return null;
     }
 
-    // Verifica se o perfil é válido
-    const perfisValidos = ["proprietario", "administracao", "ti"];
-
+    const perfisValidos = ['proprietario', 'administracao', 'ti'];
     if (!perfisValidos.includes(novoPerfil)) {
         return null;
     }
 
-    // Solicita a alteração ao modelo
-    return alterarPermissoes(responsavel, usuario, novoPerfil);
+    return await alterarPermissoes(responsavel, usuario, novoPerfil);
 }
 
 // CONTROLADOR - Redefinir senhas
-
-function redefinirSenhaControlador(idResponsavel, idUsuario, novaSenha) {
-
-    // Converte os IDs para números
+async function redefinirSenhaControlador(idResponsavel, idUsuario, novaSenha) {
     const responsavel = Number(idResponsavel);
     const usuario = Number(idUsuario);
 
-    // Verifica se os IDs são válidos
     if (!Number.isInteger(responsavel) || responsavel <= 0 ||
         !Number.isInteger(usuario) || usuario <= 0) {
         return null;
     }
 
-    // Verifica se a nova senha é válida
-    if (typeof novaSenha !== "string" || novaSenha.length < 8) {
+    if (typeof novaSenha !== 'string' || novaSenha.length < 8) {
         return null;
     }
 
-    // Solicita a redefinição ao modelo
-    return redefinirSenha(responsavel, usuario, novaSenha);
+    return await redefinirSenha(responsavel, usuario, novaSenha);
 }
-
-// EXPORTANDO A FUNÇÃO
 
 module.exports = {
     listarUsuariosControlador,
