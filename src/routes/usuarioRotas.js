@@ -11,9 +11,9 @@ const {
 } = require('../controllers/usuarioControlador');
 
 // Listar todos os usuários
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
     try {
-        const usuarios = listarUsuariosControlador();
+        const usuarios = await listarUsuariosControlador();
         return res.json(usuarios);
     } catch (erro) {
         return res.status(500).json({ erro: erro.message });
@@ -21,9 +21,9 @@ router.get('/', (req, res) => {
 });
 
 // Buscar usuário por ID
-router.get('/:id', (req, res) => {
+router.get('/:id', async (req, res) => {
     try {
-        const usuario = buscarUsuarioPorIdControlador(req.params.id);
+        const usuario = await buscarUsuarioPorIdControlador(req.params.id);
 
         if (!usuario) {
             return res.status(404).json({ erro: 'Usuário não encontrado ou ID inválido.' });
@@ -36,10 +36,10 @@ router.get('/:id', (req, res) => {
 });
 
 // Cadastrar novo usuário (requer idResponsavel com perfil 'ti')
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
     try {
         const { idResponsavel, nome, email, perfil, senha } = req.body;
-        const novoUsuario = cadastrarUsuarioControlador(idResponsavel, nome, email, perfil, senha);
+        const novoUsuario = await cadastrarUsuarioControlador(idResponsavel, nome, email, perfil, senha);
 
         if (!novoUsuario) {
             return res.status(400).json({
@@ -54,10 +54,10 @@ router.post('/', (req, res) => {
 });
 
 // Realizar login
-router.post('/login', (req, res) => {
+router.post('/login', async (req, res) => {
     try {
         const { email, senha } = req.body;
-        const usuarioAutenticado = realizarLoginControlador(email, senha);
+        const usuarioAutenticado = await realizarLoginControlador(email, senha);
 
         if (!usuarioAutenticado) {
             return res.status(401).json({ erro: 'E-mail ou senha inválidos.' });
@@ -73,10 +73,10 @@ router.post('/login', (req, res) => {
 });
 
 // Alterar permissões/perfil de um usuário
-router.put('/:id/permissoes', (req, res) => {
+router.put('/:id/permissoes', async (req, res) => {
     try {
         const { idResponsavel, novoPerfil } = req.body;
-        const resultado = alterarPermissoesControlador(idResponsavel, req.params.id, novoPerfil);
+        const resultado = await alterarPermissoesControlador(idResponsavel, req.params.id, novoPerfil);
 
         if (!resultado) {
             return res.status(400).json({
@@ -91,10 +91,10 @@ router.put('/:id/permissoes', (req, res) => {
 });
 
 // Redefinir senha de um usuário
-router.put('/:id/senha', (req, res) => {
+router.put('/:id/senha', async (req, res) => {
     try {
         const { idResponsavel, novaSenha } = req.body;
-        const resultado = redefinirSenhaControlador(idResponsavel, req.params.id, novaSenha);
+        const resultado = await redefinirSenhaControlador(idResponsavel, req.params.id, novaSenha);
 
         if (!resultado) {
             return res.status(400).json({
@@ -108,4 +108,4 @@ router.put('/:id/senha', (req, res) => {
     }
 });
 
-module.exports = router;// LUAN — Rotas de usuários.
+module.exports = router;
