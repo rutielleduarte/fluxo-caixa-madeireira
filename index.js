@@ -16,9 +16,12 @@ app.use(express.urlencoded({ extended: true }));
 
 // Disponibiliza os arquivos HTML, CSS e JavaScript
 app.use(express.static(path.join(__dirname, 'public')));
+// Importar o agrupador de rotas
+const rotas = require('./src/routes/rotas');
 
-// Importar as rotas de lançamentos
-const lancamentoRotas = require('./src/routes/lancamentoRotas');
+// Registrar todas as rotas (/lancamentos, /usuarios, /financeiro)
+app.use('/', rotas);
+
 
 // Registrar as rotas de lançamentos
 app.use('/lancamentos', lancamentoRotas);
