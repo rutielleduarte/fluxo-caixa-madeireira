@@ -1,5 +1,6 @@
 // Painel Gomes Marenda - JavaScript puro, sem bibliotecas de front-end.
 // As rotas reais deste projeto estão em /lancamentos (e não em /api/lancamentos).
+
 const API = '/lancamentos';
 const $ = (id) => document.getElementById(id);
 const dinheiro = (valor) => Number(valor || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
@@ -10,6 +11,9 @@ const seguro = (texto) => String(texto ?? '').replace(/[&<>"']/g, caractere => (
 
 const estado = {
   lancamentos: [],
+  usuarios: [],
+  categorias: [],
+  contas: [],
   demonstracao: false,
   conectado: false
 };
@@ -58,8 +62,8 @@ function notificacao(mensagem, erro = false) {
 }
 
 // Faz chamadas ao backend Express existente.
-async function chamarAPI(caminho = '', configuracao = {}) {
-  const resposta = await fetch(API + caminho, {
+async function chamarRota(rota, configuracao = {}) {
+  const resposta = await fetch(rota, {
     ...configuracao,
     headers: { 'Content-Type': 'application/json', ...(configuracao.headers || {}) }
   });
@@ -70,6 +74,10 @@ async function chamarAPI(caminho = '', configuracao = {}) {
   // Alguns controladores do projeto devolvem erros em strings com status 200.
   if (typeof retorno === 'string' && /^erro:/i.test(retorno)) throw new Error(retorno);
   return retorno;
+}
+
+async function chamarAPI(caminho = '', configuracao = {}) {
+  return chamarRota(API + caminho, configuracao);
 }
 
 // Dados ilustrativos usados SOMENTE na demonstracao visual, nao no MySQL.
@@ -109,10 +117,100 @@ function exemplos() {
   }));
 }
 
+function preencherSelect(elemento, itens, { valorChave, textoFn, placeholder }) {
+  if (!elemento || elemento.tagName !== 'SELECT') return;
+  const opcoes = [];
+  if (placeholder) {
+    opcoes.push(`<option value="">${seguro(placeholder)}</option>`);
+  }
+  itens.forEach((item) => {
+    const valor = item[valorChave];
+    const texto = textoFn(item);
+    opcoes.push(`<option value="${seguro(valor)}">${seguro(texto)}</option>`);
+  });
+  elemento.innerHTML = opcoes.join('');
+}
+
+function atualizarSelectCategorias(categoriaSelecionada = '') {
+  const selectCategoria = $('idCategoria');
+  if (!selectCategoria || selectCategoria.tagName !== 'SELECT') return;
+
+  const tipoAtual = $('tipo')?.value || 'entrada';
+  const filtradas = estado.categorias.filter((cat) => {
+    const tipoCat = String(cat.tipo || cat.tipo_lancamento || '').toLowerCase();
+    return !tipoCat || tipoCat === tipoAtual.toLowerCase();
+  });
+
+  preencherSelect(selectCategoria, filtradas, {
+    valorChave: 'id_categoria',
+    textoFn: (cat) => cat.nome || cat.descricao || `Categoria #${cat.id_categoria}`,
+    placeholder: filtradas.length ? 'Selecione uma categoria' : 'Nenhuma categoria disponível'
+  });
+
+  if (categoriaSelecionada) {
+    selectCategoria.value = String(categoriaSelecionada);
+  }
+}
+
+async function carregarOpcoesFormulario() {
+  const selectUsuario = $('idUsuario');
+  const selectConta = $('idConta');
+
+  // Fallback para modo demonstração ou quando o backend ainda não expõe essas rotas
+  const padraoUsuarios = [{ id_usuario: 1, nome: 'Administrador (Demo)' }];
+  const padraoCategorias = [
+    { id_categoria: 1, nome: 'Vendas de produtos', tipo: 'entrada' },
+    { id_categoria: 2, nome: 'Matéria-prima e insumos', tipo: 'saida' },
+    { id_categoria: 3, nome: 'Operacional e logística', tipo: 'saida' }
+  ];
+  const padraoContas = [{ id_conta: 1, nome: 'Caixa Principal' }];
+
+  if (estado.demonstracao || location.protocol === 'file:') {
+    estado.usuarios = padraoUsuarios;
+    estado.categorias = padraoCategorias;
+    estado.contas = padraoContas;
+  } else {
+    const [resUsuarios, resCategorias, resContas] = await Promise.allSettled([
+      chamarRota('/usuarios'),
+      chamarRota('/categorias'),
+      chamarRota('/contas')
+    ]);
+
+    estado.usuarios = resUsuarios.status === 'fulfilled' && Array.isArray(resUsuarios.value) && resUsuarios.value.length
+      ? resUsuarios.value
+      : padraoUsuarios;
+
+    estado.categorias = resCategorias.status === 'fulfilled' && Array.isArray(resCategorias.value) && resCategorias.value.length
+      ? resCategorias.value
+      : padraoCategorias;
+
+    estado.contas = resContas.status === 'fulfilled' && Array.isArray(resContas.value) && resContas.value.length
+      ? resContas.value
+      : padraoContas;
+  }
+
+  preencherSelect(selectUsuario, estado.usuarios, {
+    valorChave: 'id_usuario',
+    textoFn: (u) => u.nome || u.email || `Usuário #${u.id_usuario}`,
+    placeholder: 'Selecione o responsável'
+  });
+
+  if (selectConta && selectConta.tagName === 'SELECT') {
+    preencherSelect(selectConta, estado.contas, {
+      valorChave: 'id_conta',
+      textoFn: (c) => c.nome || c.descricao || `Conta #${c.id_conta}`,
+      placeholder: 'Selecione a conta'
+    });
+  }
+
+  atualizarSelectCategorias();
+}
+
 function entrarDemonstracao() {
   estado.demonstracao = true;
   estado.conectado = false;
   estado.lancamentos = exemplos();
+  carregarOpcoesFormulario();
   mostrarStatus('demo', 'Modo demonstração');
   mostrarAviso(
     'Você está visualizando dados de exemplo',
@@ -239,9 +337,15 @@ function abrirFormulario(lancamento = null) {
   $('data').value = String(lancamento?.data_lancamento || hojeISO()).slice(0, 10);
   $('forma').value = lancamento?.forma_pagamento || '';
   $('observacao').value = lancamento?.observacao || '';
-  $('idUsuario').value = lancamento?.id_usuario || localStorage.getItem('gm_id_usuario') || '';
-  $('idCategoria').value = lancamento?.id_categoria || localStorage.getItem('gm_id_categoria') || '';
-  $('idConta').value = lancamento?.id_conta || localStorage.getItem('gm_id_conta') || '';
+
+  const usuarioAlvo = lancamento?.id_usuario || localStorage.getItem('gm_id_usuario') || '';
+  const categoriaAlvo = lancamento?.id_categoria || localStorage.getItem('gm_id_categoria') || '';
+  const contaAlvo = lancamento?.id_conta || localStorage.getItem('gm_id_conta') || '';
+
+  atualizarSelectCategorias(categoriaAlvo);
+  $('idUsuario').value = usuarioAlvo;
+  $('idConta').value = contaAlvo;
+
   $('modalLancamento').showModal();
   $('descricao').focus();
 }
@@ -350,10 +454,16 @@ document.querySelectorAll('[data-nav]').forEach(link => link.addEventListener('c
   document.querySelectorAll('[data-nav]').forEach(item => item.classList.toggle('ativo', item === link));
 }));
 
+// Atualiza as categorias disponíveis sempre que o usuário alternar entre "Entrada" e "Saída"
+$('tipo').addEventListener('change', () => {
+  atualizarSelectCategorias();
+});
+
 // Inicializacao.
 $('dataAtual').textContent = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
 $('anoAtual').textContent = new Date().getFullYear();
 $('saldoInicial').value = localStorage.getItem('gm_saldo_inicial') ?? '0';
+carregarOpcoesFormulario();
 if (location.protocol === 'file:' || new URLSearchParams(location.search).get('demo') === '1') {
   entrarDemonstracao();
 } else {
