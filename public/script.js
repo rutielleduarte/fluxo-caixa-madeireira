@@ -137,13 +137,13 @@ function atualizarSelectCategorias(categoriaSelecionada = '') {
 
   const tipoAtual = $('tipo')?.value || 'entrada';
   const filtradas = estado.categorias.filter((cat) => {
-    const tipoCat = String(cat.tipo || cat.tipo_lancamento || '').toLowerCase();
+    const tipoCat = String(cat.tipo_categoria || cat.tipo || cat.tipo_lancamento || '').toLowerCase();
     return !tipoCat || tipoCat === tipoAtual.toLowerCase();
   });
 
   preencherSelect(selectCategoria, filtradas, {
     valorChave: 'id_categoria',
-    textoFn: (cat) => cat.nome || cat.descricao || `Categoria #${cat.id_categoria}`,
+    textoFn: (cat) => cat.nome_categoria || cat.nome || cat.descricao || `Categoria #${cat.id_categoria}`,
     placeholder: filtradas.length ? 'Selecione uma categoria' : 'Nenhuma categoria disponível'
   });
 
@@ -195,10 +195,10 @@ async function carregarOpcoesFormulario() {
     placeholder: 'Selecione o responsável'
   });
 
-  if (selectConta && selectConta.tagName === 'SELECT') {
+if (selectConta && selectConta.tagName === 'SELECT') {
     preencherSelect(selectConta, estado.contas, {
       valorChave: 'id_conta',
-      textoFn: (c) => c.nome || c.descricao || `Conta #${c.id_conta}`,
+      textoFn: (c) => c.nome_conta || c.nome || c.descricao || `Conta #${c.id_conta}`,
       placeholder: 'Selecione a conta'
     });
   }
@@ -305,11 +305,16 @@ function renderizarTabela(lista) {
     $('corpoTabela').innerHTML = lista.map(l => {
       const entrada = l.tipo_lancamento === 'entrada';
       const id = Number(l.id_lancamento);
+      const catEncontrada = estado.categorias.find(c => Number(c.id_categoria) === Number(l.id_categoria));
+      const nomeCategoria = catEncontrada
+  ? (catEncontrada.nome_categoria || catEncontrada.nome)
+  : `Categoria #${l.id_categoria}`;
+      
       return `<tr>
         <td><span class="descricao-principal">${seguro(l.descricao)}</span><span class="descricao-secundaria">${seguro(l.forma_pagamento || 'Forma de pagamento não informada')}</span></td>
         <td>${dataBR(l.data_lancamento)}</td>
         <td><span class="etiqueta ${entrada ? 'entrada' : 'saida'}">${entrada ? 'Entrada' : 'Saída'}</span></td>
-        <td>Categoria #${seguro(l.id_categoria)}</td>
+        <td>${seguro(nomeCategoria)}</td>
         <td class="alinhar-direita"><span class="valor-tabela ${entrada ? 'valor-entrada' : 'valor-saida'}">${entrada ? '+ ' : '- '}${dinheiro(l.valor)}</span></td>
         <td class="alinhar-direita"><button type="button" class="acao-linha" title="Editar lançamento" aria-label="Editar ${seguro(l.descricao)}" data-acao="editar" data-id="${id}"><svg class="icone"><use href="#i-pencil"/></svg></button><button type="button" class="acao-linha apagar" title="Excluir lançamento" aria-label="Excluir ${seguro(l.descricao)}" data-acao="excluir" data-id="${id}"><svg class="icone"><use href="#i-trash"/></svg></button></td>
       </tr>`;
@@ -345,7 +350,6 @@ function abrirFormulario(lancamento = null) {
   atualizarSelectCategorias(categoriaAlvo);
   $('idUsuario').value = usuarioAlvo;
   $('idConta').value = contaAlvo;
-
   $('modalLancamento').showModal();
   $('descricao').focus();
 }
@@ -463,9 +467,9 @@ $('tipo').addEventListener('change', () => {
 $('dataAtual').textContent = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
 $('anoAtual').textContent = new Date().getFullYear();
 $('saldoInicial').value = localStorage.getItem('gm_saldo_inicial') ?? '0';
-carregarOpcoesFormulario();
+
 if (location.protocol === 'file:' || new URLSearchParams(location.search).get('demo') === '1') {
   entrarDemonstracao();
 } else {
-  carregarLancamentos();
+  carregarOpcoesFormulario().then(carregarLancamentos);
 }
